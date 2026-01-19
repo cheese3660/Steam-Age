@@ -1,4 +1,6 @@
-# Hytale Plugin Template
+# Steam Age
 
-A template for Hytale java plugins. Created by Up, and slightly modified by Kaupenjoe. 
+Steam Inspired Tech Stuff For Hytale (Doesn't actually do much rn)
 
+Adds
+- A half functional hopper
