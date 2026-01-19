@@ -34,13 +34,10 @@
         }
       ]
     },
-    "State": {
-      "Id": "Lexi_SteamAge_Chute",
-      "Capacity": 5
-    },
-    "Interactions": {
-      "Primary": "Break_Container",
-      "Use": "Open_Container"
+    "BlockEntity": {
+      "Components": {
+        "Chute": {}
+      }
     }
   },
   "TranslationProperties": {
