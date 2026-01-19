@@ -4,13 +4,20 @@ import com.hypixel.hytale.builtin.adventure.farming.config.FarmingCoopAsset;
 import com.hypixel.hytale.builtin.adventure.farming.states.CoopBlock;
 import com.hypixel.hytale.component.*;
 import com.hypixel.hytale.component.query.Query;
+import com.hypixel.hytale.component.spatial.SpatialData;
+import com.hypixel.hytale.component.spatial.SpatialResource;
 import com.hypixel.hytale.component.system.RefSystem;
 import com.hypixel.hytale.component.system.tick.EntityTickingSystem;
+import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.math.util.ChunkUtil;
+import com.hypixel.hytale.math.vector.Vector3d;
 import com.hypixel.hytale.server.core.asset.type.blocktick.BlockTickStrategy;
 import com.hypixel.hytale.server.core.inventory.ItemStack;
 import com.hypixel.hytale.server.core.inventory.container.ItemContainer;
 import com.hypixel.hytale.server.core.modules.block.BlockModule;
+import com.hypixel.hytale.server.core.modules.entity.EntityModule;
+import com.hypixel.hytale.server.core.modules.entity.item.ItemComponent;
+import com.hypixel.hytale.server.core.modules.item.ItemModule;
 import com.hypixel.hytale.server.core.modules.time.WorldTimeResource;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.chunk.BlockChunk;
@@ -27,6 +34,9 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Field;
+import java.time.temporal.TemporalField;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class ChuteSystems {
@@ -196,9 +206,44 @@ public class ChuteSystems {
             {
                 transferFirstItem(upContainer,chuteContainer);
             }
+            else
+            {
+                // Now we try and scan the world above this chute for any items
+                var spatialResources = store.getResource(EntityModule.get().getItemSpatialResourceType());
+                List<Ref<EntityStore>> itemEntities = new ArrayList<>();
+                Vector3d firstCorner = new Vector3d(worldX - 0.25, worldY + 1, worldZ - 0.25);
+                Vector3d secondCorner = new Vector3d(worldX + 1.25, worldY + 2, worldZ + 1.25);
+                spatialResources.getSpatialStructure().collectBox(firstCorner, secondCorner, itemEntities);
+                if (!itemEntities.isEmpty())
+                {
+                    for (var entity : itemEntities)
+                    {
+                        var component = store.getComponent(entity, ItemComponent.getComponentType());
+                        if (component != null && component.getItemStack() != null && insertItem(chuteContainer, component.getItemStack()))
+                        {
+                            if (component.getItemStack().getQuantity() == 1)
+                            {
+                                store.removeEntity(entity, RemoveReason.REMOVE);
+                            }
+                            else
+                            {
+                                component.setItemStack(component.getItemStack().withQuantity(component.getItemStack().getQuantity() - 1));
+                            }
+                            break;
+                        }
+                    }
+                }
+//                for (Ref<EntityStore> entityRef : itemEntities)
+//                {
+//                    if (store.getComponent(entityRef, ItemComponent.getComponentType()) instanceof ItemComponent itemComponent)
+//                    {
+//                        wo
+//                    }
+//                }
+            }
 
             var nextTick = chuteBlock.getNextScheduleTick(worldTimeResource);
-            blockSection.scheduleTick(ChunkUtil.indexBlock(x,y,z),nextTick);
+            blockSection.scheduleTick(ChunkUtil.indexBlock(x,y,z), nextTick);
         }
 
         @Nullable

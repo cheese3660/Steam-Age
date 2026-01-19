@@ -7,7 +7,6 @@ import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 import com.hypixel.hytale.server.core.universe.world.meta.state.ItemContainerState;
 import com.hypixel.hytale.server.core.universe.world.storage.ChunkStore;
 import com.lexi.steamage.components.ChuteBlock;
-import com.lexi.steamage.states.ChuteState;
 import com.lexi.steamage.systems.ChuteSystems;
 
 public class SteamAge extends JavaPlugin {

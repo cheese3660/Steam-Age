@@ -47,14 +47,14 @@ public class ChuteBlock implements Component<ChunkStore> {
     }
 
     /**
-     * We want to tick this block every 20th of a second
+     * We want to tick this block every 0.4 seconds
      * @param time the world time
      * @return the next tick to schedule
      */
     public Instant getNextScheduleTick(WorldTimeResource time)
     {
         Instant gameTime = time.getGameTime();
-        return gameTime.plus(50, ChronoUnit.MILLIS);
+        return gameTime.plus(400, ChronoUnit.MILLIS);
     }
 
     /**
